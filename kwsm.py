@@ -3,8 +3,8 @@ import numpy
 
 # カメラキャプチャ
 cap = cv2.VideoCapture(0)
-# 笑い男の動画かgifアニメ　背景が黒いやつ
-gif = cv2.VideoCapture('icon.mp4')
+#kwsm
+kwsm = cv2.imread("kwsm.png");
 
 # 分類器
 # ここからダウンロード 
@@ -18,14 +18,10 @@ while True:
     # フレームの反転
     frame = cv2.flip(frame, 1)
 
-    # 笑い男アニメから1フレームずつ取得
-    g, icon = gif.read()
-    # ループ再生
-    if not g:
-        gif.set(cv2.CAP_PROP_POS_FRAMES, 0)
-        continue
+    # kwsmに代入
+    icon = kwsm
 
-    # 笑い男アイコンのもともとの縦横比を計算
+    # kwsmのもともとの縦横比を計算
     orig_height, orig_width = icon.shape[:2]
     aspect_ratio = orig_width/orig_height
 
@@ -42,7 +38,7 @@ while True:
         #検出した顔の数だけ処理を行う
         for rect in facerect:
             # 顔サイズに合わせて笑い男アイコンをリサイズ
-            icon = cv2.resize(icon,tuple([int(rect[2]*aspect_ratio), int(rect[3])]))
+            icon = cv2.resize(icon,tuple([int(rect[2]*aspect_ratio*1.6), int(rect[3]*1.6)]))
 
             # 透過処理準備
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2RGBA)
@@ -56,14 +52,17 @@ while True:
             height, width = icon.shape[:2]
             frame_height, frame_width = frame.shape[:2]
 
+            w1 = int(width*0.2)
+            w2 = width - w1;
+            
             # 合成時にはみ出さない場合だけ合成を行う
-            if frame_height > rect[1]+height and frame_width > rect[0]+width:
+            if frame_height > rect[1]+height and frame_width > rect[0]+width :
                 # 合成する座標を指定
-                roi = frame[rect[1]:height+rect[1], rect[0]:width+rect[0]]
+                roi = frame[rect[1]:height+rect[1], rect[0]-w1:w2+rect[0]]
 
                 # カメラフレームのうち、顔座標に相当する部分を笑い男アイコンに置き換える
                 # マスクを使い、笑い男アイコン背景の黒い部分を透過させる
-                frame[rect[1]:height+rect[1], rect[0]:width+rect[0]] = numpy.where(numpy.expand_dims(binary == 255, -1), icon, roi)
+                frame[rect[1]:height+rect[1], rect[0]-w1:w2+rect[0]] = numpy.where(numpy.expand_dims(binary == 255, -1), icon, roi)
 
     cv2.imshow('result', frame)
 
