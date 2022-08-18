@@ -34,7 +34,7 @@ while True:
         minSize=(100, 100)
     )
     
-    if len(facerect) > 0:
+    if len(facerect) == 1:
         #検出した顔の数だけ処理を行う
         for rect in facerect:
             # 顔サイズに合わせて笑い男アイコンをリサイズ
