@@ -37,10 +37,11 @@ while True:
         gray,
         scaleFactor=1.11,
         minNeighbors=3,
-        minSize=(10, 10)
+        minSize=(100, 100)
     )
+
     
-    if len(facerect) > 1:
+    if len(facerect) > 0:
         #検出した顔の数だけ処理を行う
         for rect in facerect:
             # 顔サイズに合わせてkwsmをリサイズ
